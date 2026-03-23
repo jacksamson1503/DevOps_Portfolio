@@ -2,21 +2,16 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/my-app"
+        DOCKER_IMAGE = "jack1503/my-portfolio"
+        IMAGE_TAG = "${BUILD_NUMBER}"
         CONTAINER_NAME = "my-app-container"
     }
 
     stages {
 
-        stage('Clone Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/jacksamson1503/DevOps_Portfolio.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE .'
+                sh 'docker build -t $DOCKER_IMAGE:$IMAGE_TAG .'
             }
         }
 
@@ -34,7 +29,7 @@ pipeline {
 
         stage('Push Image to DockerHub') {
             steps {
-                sh 'docker push $DOCKER_IMAGE'
+                sh 'docker push $DOCKER_IMAGE:$IMAGE_TAG'
             }
         }
 
@@ -42,7 +37,7 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f $CONTAINER_NAME || true
-                docker run -d -p 80:80 --name $CONTAINER_NAME $DOCKER_IMAGE
+                docker run -d -p 80:80 --name $CONTAINER_NAME $DOCKER_IMAGE:$IMAGE_TAG
                 '''
             }
         }
