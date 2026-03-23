@@ -10,7 +10,7 @@ pipeline {
 
         stage('Clone Code') {
             steps {
-                git 'https://github.com/jacksamson1503/DevOps_Portfolio.git'
+                git branch: 'main', url: 'https://github.com/jacksamson1503/DevOps_Portfolio.git'
             }
         }
 
