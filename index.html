@@ -1567,7 +1567,7 @@ footer .grad{
       <span>Available for Cloud &amp; DevOps Roles</span>
     </div>
     <p class="hero-hi">// Hello, I'm</p>
-    <h1 class="hero-name">Jack Samson <span class="accent">C.</span></h1>
+    <h1 class="hero-name">Jack Samson <span class="accent">C .</span></h1>
     <p class="hero-role">
       <span class="hero-role-icon">☁️</span>
       <span id="typingText"></span><span class="typing-cursor"></span>
@@ -1593,7 +1593,7 @@ footer .grad{
     </div>
     <div class="hero-btns">
       <a href="#projects" class="btn-primary">View My Projects</a>
-      <a href="#resume" class="btn-resume">📄 View Resume</a>
+      <a href="#resume" class="btn-resume">View Resume</a>
       <a href="#contact" class="btn-ghost">Contact Me</a>
     </div>
   </div>
@@ -1681,7 +1681,7 @@ footer .grad{
   <div class="about-grid">
     <div class="about-text slide-from-left">
       <div class="transition-banner">
-        <div class="tb-heading">🚀 Career Transition Journey</div>
+        <div class="tb-heading">Career Transition Journey</div>
         <div class="tb-steps">
           <div class="tb-step active">System Administrator</div>
           <span class="tb-chevron">›</span>
@@ -2130,6 +2130,7 @@ function closeMenu() {
 
 /* ── BACKGROUND MUSIC ── */
 const musicToggle = document.getElementById('musicToggle');
+
 let audioCtx;
 let musicMaster;
 let musicTimers = [];
@@ -2137,15 +2138,29 @@ let musicOn = false;
 let musicStarted = false;
 let userStoppedMusic = false;
 
-function playTone(freq, start, duration, type, volume, destination = musicMaster) {
+function playTone(
+  freq,
+  start,
+  duration,
+  type,
+  volume,
+  destination = musicMaster
+) {
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
+
   osc.type = type;
   osc.frequency.setValueAtTime(freq, start);
+
   gain.gain.setValueAtTime(0, start);
-  gain.gain.linearRampToValueAtTime(volume, start + 0.012);
-  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+  gain.gain.linearRampToValueAtTime(volume, start + 0.01);
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    start + duration
+  );
+
   osc.connect(gain).connect(destination);
+
   osc.start(start);
   osc.stop(start + duration + 0.05);
 }
@@ -2154,36 +2169,103 @@ function scheduleMusicBar() {
   if (!musicOn || !audioCtx) return;
 
   const now = audioCtx.currentTime + 0.02;
+
   const chords = [
     [261.63, 329.63, 392.00],
     [220.00, 261.63, 329.63],
     [246.94, 293.66, 369.99],
     [196.00, 246.94, 293.66]
   ];
-  const melody = [659.25, 587.33, 523.25, 587.33, 659.25, 783.99, 659.25, 587.33];
-  const bass = [130.81, 110.00, 123.47, 98.00];
 
+  const melody = [
+    659.25,
+    587.33,
+    523.25,
+    587.33,
+    659.25,
+    783.99,
+    659.25,
+    587.33
+  ];
+
+  const bass = [
+    130.81,
+    110.00,
+    123.47,
+    98.00
+  ];
+
+  // CHORDS (LOUDER)
   chords.forEach((chord, bar) => {
     const barStart = now + bar * 1.6;
-    chord.forEach((freq, i) => playTone(freq, barStart, 1.45, 'sine', i === 0 ? 0.055 : 0.038));
-    playTone(bass[bar], barStart, 0.55, 'triangle', 0.08);
-    playTone(bass[bar], barStart + 0.8, 0.42, 'triangle', 0.052);
+
+    chord.forEach((freq, i) =>
+      playTone(
+        freq,
+        barStart,
+        1.45,
+        "sine",
+        i === 0 ? 0.16 : 0.12
+      )
+    );
+
+    // BASS (LOUDER)
+    playTone(
+      bass[bar],
+      barStart,
+      0.55,
+      "triangle",
+      0.22
+    );
+
+    playTone(
+      bass[bar],
+      barStart + 0.8,
+      0.42,
+      "triangle",
+      0.16
+    );
   });
 
+  // MELODY (LOUDER)
   melody.forEach((freq, step) => {
-    playTone(freq, now + step * 0.4, 0.24, 'triangle', 0.075);
+    playTone(
+      freq,
+      now + step * 0.4,
+      0.24,
+      "triangle",
+      0.18
+    );
   });
 
-  musicTimers.push(setTimeout(scheduleMusicBar, 6400));
+  musicTimers.push(
+    setTimeout(scheduleMusicBar, 6400)
+  );
 }
 
 function startBackgroundMusic() {
   if (musicStarted) return;
+
   musicStarted = true;
-  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+
+  audioCtx =
+    audioCtx ||
+    new (window.AudioContext ||
+      window.webkitAudioContext)();
+
   musicMaster = audioCtx.createGain();
-  musicMaster.gain.setValueAtTime(0, audioCtx.currentTime);
-  musicMaster.gain.linearRampToValueAtTime(0.22, audioCtx.currentTime + 0.08);
+
+  musicMaster.gain.setValueAtTime(
+    0,
+    audioCtx.currentTime
+  );
+
+  // MASTER VOLUME (INCREASED)
+  musicMaster.gain.linearRampToValueAtTime(
+    0.65,
+    audioCtx.currentTime + 0.1
+  );
+
   musicMaster.connect(audioCtx.destination);
 
   scheduleMusicBar();
@@ -2192,59 +2274,115 @@ function startBackgroundMusic() {
 function stopBackgroundMusic() {
   musicTimers.forEach(clearTimeout);
   musicTimers = [];
+
   if (musicMaster) {
-    musicMaster.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08);
+    musicMaster.gain.setTargetAtTime(
+      0,
+      audioCtx.currentTime,
+      0.08
+    );
   }
+
   musicStarted = false;
 }
 
 async function setMusicState(shouldPlay) {
   userStoppedMusic = !shouldPlay;
   musicOn = shouldPlay;
+
   if (musicOn) {
     startBackgroundMusic();
-    if (audioCtx.state === 'suspended') await audioCtx.resume();
-    if (audioCtx.state !== 'running') throw new Error('Audio autoplay blocked');
+
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+
+    if (audioCtx.state !== "running") {
+      throw new Error("Audio autoplay blocked");
+    }
   } else {
     stopBackgroundMusic();
   }
-  musicToggle.setAttribute('aria-pressed', String(musicOn));
-  musicToggle.textContent = musicOn ? 'Music on' : 'Music off';
+
+  musicToggle.setAttribute(
+    "aria-pressed",
+    String(musicOn)
+  );
+
+  musicToggle.textContent = musicOn
+    ? "Music on"
+    : "Music off";
 }
 
-musicToggle.addEventListener('click', (event) => {
+musicToggle.addEventListener("click", (event) => {
   event.stopPropagation();
   setMusicState(!musicOn);
 });
 
 function markMusicBlocked() {
-  if (musicOn && audioCtx && audioCtx.state === 'running') return;
+  if (
+    musicOn &&
+    audioCtx &&
+    audioCtx.state === "running"
+  )
+    return;
+
   if (musicStarted) stopBackgroundMusic();
+
   musicOn = false;
   musicStarted = false;
-  musicToggle.setAttribute('aria-pressed', 'false');
-  musicToggle.textContent = 'Click anywhere for music';
+
+  musicToggle.setAttribute(
+    "aria-pressed",
+    "false"
+  );
+
+  musicToggle.textContent =
+    "Click anywhere for music";
 }
 
 function tryAutoplayMusic() {
   setMusicState(true).catch(markMusicBlocked);
+
   setTimeout(() => {
-    if (!audioCtx || audioCtx.state !== 'running') markMusicBlocked();
+    if (
+      !audioCtx ||
+      audioCtx.state !== "running"
+    ) {
+      markMusicBlocked();
+    }
   }, 700);
 }
 
-window.addEventListener('DOMContentLoaded', tryAutoplayMusic);
-if (document.readyState !== 'loading') tryAutoplayMusic();
+window.addEventListener(
+  "DOMContentLoaded",
+  tryAutoplayMusic
+);
 
-document.addEventListener('pointerdown', () => {
-  if (musicOn || userStoppedMusic) return;
-  setMusicState(true).catch(() => {
-    musicOn = false;
-    musicStarted = false;
-    musicToggle.setAttribute('aria-pressed', 'false');
-    musicToggle.textContent = 'Click anywhere for music';
-  });
-}, { once:true });
+if (document.readyState !== "loading") {
+  tryAutoplayMusic();
+}
+
+document.addEventListener(
+  "pointerdown",
+  () => {
+    if (musicOn || userStoppedMusic) return;
+
+    setMusicState(true).catch(() => {
+      musicOn = false;
+      musicStarted = false;
+
+      musicToggle.setAttribute(
+        "aria-pressed",
+        "false"
+      );
+
+      musicToggle.textContent =
+        "Click anywhere for music";
+    });
+  },
+  { once: true }
+);
 
 /* ── RESUME TOGGLE ── */
 function toggleResume() {
